@@ -17,7 +17,8 @@ def Verificar_estandares_archivo(archivo):
         if len(linea) > 79:
             errores.append(f"Línea {i+1}: Excede los 80 caracteres")
 
-        if '#' in linea:  # Verifica si hay un comentario
+        # Verifica si hay un comentario
+        if '#' in linea:  
             indice_comentario = linea.index('#')
         
             # Verificar si el '#' está dentro de comillas simples o dobles
@@ -26,25 +27,31 @@ def Verificar_estandares_archivo(archivo):
 
             for j, char in enumerate(linea):
 
-                if char == "'" and (j == 0 or linea[j - 1] != '\\'):  # Cambiar estado para comillas simples
+                # Cambiar estado para comillas simples
+                if char == "'" and (j == 0 or linea[j - 1] != '\\'):  
                     dentro_simple = not dentro_simple
 
-                elif char == '"' and (j == 0 or linea[j - 1] != '\\'):  # Cambiar estado para comillas dobles
+                # Cambiar estado para comillas dobles
+                elif char == '"' and (j == 0 or linea[j - 1] != '\\'):  
                     dentro_doble = not dentro_doble
 
+                # Si el '#' está dentro de comillas, ignorar la línea
                 if j == indice_comentario and (dentro_simple or dentro_doble):
-                    break  # Si el '#' está dentro de comillas, ignorar la línea
-
+                    break  
+            
+            # Procesar solo si el '#' no está dentro de comillas
             else:
-                # Procesar solo si el '#' no está dentro de comillas
-                partes = linea.split('#', 1)  # Divide la línea en dos partes en el símbolo #
-                despues_del_hash = partes[1]  # Obtiene el texto después del #
+                # Divide la línea en dos partes en el símbolo #
+                partes = linea.split('#', 1) 
+                # Obtiene el texto después del # 
+                despues_del_hash = partes[1]  
 
                 # Verificar que hay exactamente 1 espacio después del #
                 if not re.match(r'^ [^\s]', despues_del_hash):
                     raise Exception(f"Línea {i+1}: Debe haber exactamente un espacio después de '#'")
             
-                comentario = despues_del_hash.strip()  # Elimina espacios alrededor del comentario
+                # Elimina espacios alrededor del comentario
+                comentario = despues_del_hash.strip()  
             
                 # Verificar que el comentario empieza con mayúscula y no está vacío
                 if not comentario or comentario[0].islower():
@@ -52,14 +59,17 @@ def Verificar_estandares_archivo(archivo):
 
         # Verificar las comas
         if ',' in linea:
-            dentro_comillas = False  # Bandera para saber si estamos dentro de comillas
+             # Bandera para saber si estamos dentro de comillas
+            dentro_comillas = False 
 
             for j, char in enumerate(linea):
 
-                if char in "'\"":  # Cuando encontramos una comilla
+                # Cuando encontramos una comilla
+                if char in "'\"":  
 
                     # Cambiar el estado de la bandera (si estamos dentro de comillas o no)
-                    if j == 0 or linea[j-1] != '\\':  # Evitar los escapes de comillas
+                    # Evitar los escapes de comillas
+                    if j == 0 or linea[j-1] != '\\': 
                         dentro_comillas = not dentro_comillas
 
                 # Si no estamos dentro de comillas, verificar las comas
@@ -97,15 +107,16 @@ def Verificar_estandares_archivo(archivo):
         if conteo_estructuras > 1:
             raise Exception(f"Línea {i+1}: Más de una estructura de control en la misma línea")
         
-        linea = linea.strip()  # Elimina espacios en blanco al inicio y al final
+        # Elimina espacios en blanco al inicio y al final
+        linea = linea.strip()  
     
         # Verificar si es una declaración de clase
-        if linea.startswith("class "):  # Identifica si es una clase
+        if linea.startswith("class "): 
             raise Exception(f"Línea {i+1}: El uso de class, es solo para programación orientada a objetos")
     
         # Verificar si es una declaración de función
-        elif linea.startswith("def "):  # Identifica si es una función
-            nombre_funcion = linea.split()[1].split('(')[0]  # Obtiene el nombre de la función
+        elif linea.startswith("def "): 
+            nombre_funcion = linea.split()[1].split('(')[0]
 
             if not nombre_funcion[0].isupper():
                 raise Exception(f"Línea {i+1}: El nombre de la función '{nombre_funcion}' no comienza con mayuscula") 
@@ -162,13 +173,15 @@ def Contar_lineas_fisicas(file_path):
         # Abre el archivo en modo de solo lectura
         with open(file_path, 'r') as archivo:
 
-            for linea in archivo:  # Itera por cada línea en el archivo
+            # Itera por cada línea en el archivo
+            for linea in archivo:  
                 # Excluye líneas vacías y comentarios
                 linea = linea.strip()
 
                 if linea.startswith("#") or len(linea) == 0:
                     continue
-                lineas_fisicas += 1  # Incrementa el contador de líneas físicas por cada línea leída
+                # Incrementa el contador de líneas físicas por cada línea leída
+                lineas_fisicas += 1  
 
     except FileNotFoundError:
         print(f"Error: El archivo '{file_path}' no se encontró.")
@@ -184,11 +197,13 @@ def Contar_lineas_fisicas(file_path):
 if __name__ == "__main__":
     # Crea una ventana oculta para abrir el cuadro de diálogo de selección de archivos
     root = tk.Tk()
-    root.withdraw()  # Oculta la ventana principal
+    # Oculta la ventana principal
+    root.withdraw()  
     # Abre una ventana para seleccionar un archivo
     archivo = filedialog.askopenfilename(title="Selecciona un archivo", filetypes=[("Archivos de Python", "*.py"), ("Todos los archivos", "*.*")])
 
-    if archivo:  # Verifica si el usuario seleccionó un archivo
+    # Verifica si el usuario seleccionó un archivo
+    if archivo:  
         
         try:
             # Verificar si el archvio cumple con los estandares de codificación
