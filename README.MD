@@ -1,6 +1,3 @@
-Claro, puedo ayudarte a redactar una explicación sobre la estructura de tu repositorio para incluirla en el archivo `README.md`. Aquí tienes un ejemplo de cómo podrías describirlo:
-
----
 
 ## Estructura del repositorio
 
